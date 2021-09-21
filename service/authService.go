@@ -11,7 +11,7 @@ import (
 
 type AuthService interface {
 	VerifyCredential(email string, password string) interface{}
-	CreateUser(user models.User) models.User
+	CreateUser(user models.Register) models.User
 	FindByEmail(email string) models.User
 	IsDuplicateEmail(email string) bool
 }
@@ -37,7 +37,7 @@ func (service *authService) VerifyCredential(email string, password string) inte
 	return false
 }
 
-func (service *authService) CreateUser(user models.User) models.User {
+func (service *authService) CreateUser(user models.Register) models.User {
 	userToCreate := models.User{}
 	err := smapping.FillStruct(&userToCreate, smapping.MapFields(&user))
 	if err != nil {

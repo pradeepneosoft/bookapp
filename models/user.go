@@ -19,9 +19,10 @@ type Register struct {
 	Password  string `json:"password" form:"password" binding:"required"`
 }
 type UserUpdate struct {
-	ID        uint64 `json:"id" form:"id"`
-	FirstName string `json:"firstname" form:"firstname" binding:"required"`
-	LastName  string `json:"lastname" form:"lastname" binding:"required"`
-	Email     string `json:"email" form:"email" binding:"required,email"`
-	Password  string `json:"password,omitempty" form:"password,omitempty"`
+	ID        uint64  `json:"id" form:"id"`
+	FirstName string  `json:"firstname" form:"firstname" binding:"required"`
+	LastName  string  `json:"lastname" form:"lastname" binding:"required"`
+	Email     string  `json:"email" form:"email" binding:"required,email"`
+	Password  string  `json:"password,omitempty" form:"password,omitempty"`
+	Books     *[]Book `json:"books,omitempty"`
 }

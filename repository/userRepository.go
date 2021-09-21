@@ -13,7 +13,7 @@ type UserRepository interface {
 	VerifyCredential(email string, password string) interface{}
 	IsDuplicateEmail(email string) *gorm.DB
 	FindByEmail(email string) models.User
-	// ProfileUser(userId string) models.User
+	ProfileUser(userId string) models.User
 }
 
 type UserConnection struct {
@@ -59,6 +59,8 @@ func (db *UserConnection) FindByEmail(email string) models.User {
 	return user
 }
 
-// func (db *UserConnection) ProfileuUser(userId string) models.User {
-
-// }
+func (db *UserConnection) ProfileUser(userId string) models.User {
+	var user models.User
+	db.Conn.Preload("Books").Preload("Books.User").Find(&user, userId)
+	return user
+}

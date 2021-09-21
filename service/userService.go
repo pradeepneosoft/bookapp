@@ -10,6 +10,7 @@ import (
 
 type UserService interface {
 	UpdateUser(user models.UserUpdate) models.User
+	Profile(userID string) models.User
 }
 type userService struct {
 	UserRepo repository.UserRepository
@@ -29,4 +30,7 @@ func (service *userService) UpdateUser(user models.UserUpdate) models.User {
 	}
 	updatedUser := service.UserRepo.Updateuser(userToUpadte)
 	return updatedUser
+}
+func (service *userService) Profile(userID string) models.User {
+	return service.UserRepo.ProfileUser(userID)
 }
