@@ -6,9 +6,10 @@ import (
 	"newApp/helper"
 	"newApp/models"
 	"newApp/service"
+	"strconv"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
 )
 
 type UserController interface {
@@ -17,10 +18,10 @@ type UserController interface {
 }
 type userController struct {
 	UserService service.UserService
-	JwtService  service.JwtService
+	JwtService  service.JWTservice
 }
 
-func NewUserController(userservice service.UserService, jwt service.JwtService) UserController {
+func NewUserController(userservice service.UserService, jwt service.JWTservice) UserController {
 	return &userController{
 		UserService: userservice,
 		JwtService:  jwt,
@@ -34,17 +35,30 @@ func (u *userController) Update(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
-
+	authHeader := helper.GetTokenFromHeader(c.GetHeader("Authorization"))
+	token, err := u.JwtService.ValidateToken(authHeader)
+	if err != nil {
+		panic(err.Error())
+	}
+	claims := token.Claims.(jwt.MapClaims)
+	id, err := strconv.ParseUint(fmt.Sprintf("%v", claims["user_id"]), 10, 64)
+	if err != nil {
+		panic(err.Error())
+	}
+	userToUpdate.ID = id
+	saved := u.UserService.UpdateUser(userToUpdate)
+	res := helper.BuildResponse(true, "ok", saved)
+	c.JSON(http.StatusOK, res)
 }
 func (u *userController) Profile(c *gin.Context) {
-	authHeader := c.getHeader("Authorization")
+	authHeader := helper.GetTokenFromHeader(c.GetHeader("Authorization"))
 	token, err := u.JwtService.ValidateToken(authHeader)
 	if err != nil {
 		panic(err.Error())
 	}
 	claims := token.Claims.(jwt.MapClaims)
 	id := fmt.Sprintf("%v", claims["user_id"])
-	user := c.userService.Profile(id)
+	user := u.UserService.Profile(id)
 	res := helper.BuildResponse(true, "ok", user)
 	c.JSON(http.StatusOK, res)
 

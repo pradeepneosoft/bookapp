@@ -28,7 +28,7 @@ func NewAuthService(userRepo repository.UserRepository) AuthService {
 func (service *authService) VerifyCredential(email string, password string) interface{} {
 	res := service.UserRepo.VerifyCredential(email, password)
 	if v, ok := res.(models.User); ok {
-		Check := helper.CheckPasswordHash(v.Password, password)
+		Check := helper.CheckPasswordHash(password, v.Password)
 		if Check && v.Email == email {
 			return res
 		}

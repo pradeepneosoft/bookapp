@@ -16,10 +16,10 @@ type AuthController interface {
 }
 type authController struct {
 	authService service.AuthService
-	jwtService  service.JwtService
+	jwtService  service.JWTservice
 }
 
-func NewAuthController(auth service.AuthService, jwt service.JwtService) AuthController {
+func NewAuthController(auth service.AuthService, jwt service.JWTservice) AuthController {
 	return &authController{
 		authService: auth,
 		jwtService:  jwt,
@@ -34,7 +34,7 @@ func (auth *authController) Login(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
-	authResult := c.authService.VerifyCredential(login.Email, login.Password)
+	authResult := auth.authService.VerifyCredential(login.Email, login.Password)
 	if v, ok := authResult.(models.User); ok {
 		generatedToken := auth.jwtService.GenerateToken(strconv.FormatUint(v.ID, 10))
 		v.Token = generatedToken

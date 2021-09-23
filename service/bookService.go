@@ -29,7 +29,7 @@ func NewBookService(repo repository.BookRepository) BookService {
 
 func (service *bookService) Insert(book models.BookCreate) models.Book {
 	b := models.Book{}
-	err := smapping.FillStruct(&b, smapping.MapFields(book))
+	err := smapping.FillStruct(&b, smapping.MapFields(&book))
 	if err != nil {
 		log.Fatalf("failed to map %v:", err)
 	}
@@ -39,7 +39,7 @@ func (service *bookService) Insert(book models.BookCreate) models.Book {
 }
 func (service *bookService) Update(book models.BookUpdate) models.Book {
 	b := models.Book{}
-	err := smapping.FillStruct(&b, smapping.MapFields(book))
+	err := smapping.FillStruct(&b, smapping.MapFields(&book))
 	if err != nil {
 		log.Fatalf("failed to map %v:", err)
 	}

@@ -5,7 +5,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/golang-jwt/jwt"
 )
 
@@ -53,10 +52,13 @@ func (jwtservice *JwtService) GenerateToken(userID string) string {
 	}
 	return t
 }
-func (jwtservice *JwtService) ValidateToken(Token string) (*jwt.Token, error) {
-	return jwt.Parse(Token, func(t *jwt.Token) (interface{}, error) {
-		if _, ok := t.Method.(*jwtSigningMethodHMAC); ok {
-			return nil, fmt.Errorf("unexpected signing methid %v", t.Header["alg"])
+func (jwtservice *JwtService) ValidateToken(token string) (*jwt.Token, error) {
+
+	return jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
+		fmt.Println(t.Method.(*jwt.SigningMethodHMAC))
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			fmt.Println(t.Header)
+			return nil, fmt.Errorf("unexpected signing method %v", t.Header["alg"])
 		}
 		return []byte(jwtservice.SecretKey), nil
 	})
