@@ -8,8 +8,12 @@ import (
 	"newApp/repository"
 	"newApp/service"
 
+	swaggerFiles "github.com/swaggo/files"
+
 	"github.com/gin-gonic/gin"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
+	//_ "github.com/MartinHeinz/go-project-blueprint/cmd/blueprint/docs"
 )
 
 var (
@@ -23,24 +27,36 @@ var (
 	authController controller.AuthController = controller.NewAuthController(authService, jwtService)
 	bookController controller.BookController = controller.NewBookController(bookService, jwtService)
 	userController controller.UserController = controller.NewUserController(userService, jwtService)
+	Router                                   = gin.Default()
 )
 
+// @title newApp Swagger API
+// @version 1.0
+// @description Swagger API for Golang Project Blueprint.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.email pradeep.bora@neosoftmail.com
+
+// @BasePath /api/v1
 func main() {
 	fmt.Println("sever up & started")
 	defer config.ClosedatabaseConnection(db)
-	r := gin.Default()
-	authRoutes := r.Group("api/auth")
+	Router := gin.Default()
+	Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	authRoutes := Router.Group("api/auth")
 	{
 		authRoutes.POST("/login", authController.Login)
 		authRoutes.POST("/register", authController.Register)
 	}
-	userRoutes := r.Group("api/user", middleware.AuthorizeJwt(jwtService))
+	userRoutes := Router.Group("api/user", middleware.AuthorizeJwt(jwtService))
 	{
 		userRoutes.PUT("profile", userController.Update)
 		userRoutes.GET("profile", userController.Profile)
 
 	}
-	bookRoutes := r.Group("api/books", middleware.AuthorizeJwt(jwtService))
+	bookRoutes := Router.Group("api/books", middleware.AuthorizeJwt(jwtService))
 	{
 		bookRoutes.GET("/", bookController.All)
 		bookRoutes.POST("/", bookController.Insert)
@@ -48,5 +64,5 @@ func main() {
 		bookRoutes.PUT("/:id", bookController.Update)
 		bookRoutes.DELETE("/:id", bookController.Delete)
 	}
-	r.Run(":8000")
+	Router.Run(":8000")
 }
