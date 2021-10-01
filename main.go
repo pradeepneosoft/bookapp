@@ -13,7 +13,9 @@ import (
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
+
 	//_ "github.com/MartinHeinz/go-project-blueprint/cmd/blueprint/docs"
+	_ "newApp/docs"
 )
 
 var (
@@ -43,6 +45,7 @@ func main() {
 	fmt.Println("sever up & started")
 	defer config.ClosedatabaseConnection(db)
 	Router := gin.Default()
+
 	Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	authRoutes := Router.Group("api/auth")

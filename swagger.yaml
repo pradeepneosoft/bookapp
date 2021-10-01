@@ -1,0 +1,73 @@
+basePath: /
+consumes:
+- application/json
+definitions:
+  Book:
+    properties:
+      description:
+        type: string
+        x-go-name: Description
+      id:
+        format: uint64
+        type: integer
+        x-go-name: ID
+      title:
+        type: string
+        x-go-name: Title
+      user:
+        $ref: '#/definitions/User'
+    type: object
+    x-go-package: newApp/models
+  User:
+    properties:
+      books:
+        items:
+          $ref: '#/definitions/Book'
+        type: array
+        x-go-name: Books
+      email:
+        type: string
+        x-go-name: Email
+      firstname:
+        type: string
+        x-go-name: FirstName
+      id:
+        format: uint64
+        type: integer
+        x-go-name: ID
+      lastname:
+        type: string
+        x-go-name: LastName
+      token:
+        type: string
+        x-go-name: Token
+    type: object
+    x-go-package: newApp/models
+host: some-url.com
+info:
+  description: Documentation of our awesome API.
+  title: awesome.
+  version: 1.0.0
+paths:
+  /books:
+    get:
+      operationId: books-tag
+      responses:
+        "200":
+          $ref: '#/responses/%7B[]models.Book%7D'
+      summary: Books return list of books.
+produces:
+- application/json
+responses:
+  bookResponse:
+    description: This text will appear as description of your response body.
+    schema:
+      items:
+        $ref: '#/definitions/Book'
+      type: array
+schemes:
+- http
+securityDefinitions:
+  basic:
+    type: basic
+swagger: "2.0"
