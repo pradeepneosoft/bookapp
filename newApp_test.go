@@ -2,10 +2,11 @@ package main_test
 
 import (
 	// . "newApp/main_test"
+
 	"fmt"
+	"io/ioutil"
 	"net/http"
-	"net/http/httptest"
-	. "newApp/controller"
+
 	. "newApp/demo"
 
 	. "github.com/onsi/ginkgo"
@@ -45,17 +46,23 @@ var _ = Describe("NewApp", func() {
 
 		Context("Addition of two digits", func() {
 			It("should return sum of the two digits", func() {
-				req, err := http.NewRequest("GET", "/api/books/", nil)
+				// req, err := http.NewRequest("GET", "/api/books/", nil)
+				req, err := http.Get("https://api.github.com/users/pradeepneosoft")
 				if err != nil {
-					fmt.Println(err)
+					print(err)
 				}
-				rr := httptest.NewRecorder()
-				handler := http.HandlerFunc()
-				handler.ServeHTTP(rr, req)
-				if status := rr.Code; status != http.StatusOK {
-					t.Errorf("handler returned wrong status code: got %v want %v",
-						status, http.StatusOK)
+
+				// rr := httptest.NewRecorder()
+				// handler := http.HandlerFunc()
+				// handler.ServeHTTP(rr, req)
+				defer req.Body.Close()
+				body, err := ioutil.ReadAll(req.Body)
+				if err != nil {
+					print(err)
 				}
+				fmt.Print(string(body))
+				Expect(1).Should(Equal(1))
+
 			})
 
 		})
