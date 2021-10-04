@@ -32,6 +32,31 @@ var _ = Describe("BookService", func() {
 		bookRepository = repository.NewBookRepository(db)
 		bookService = service.NewBookService(bookRepository)
 	})
+	Describe("fetching one book", func() {
+
+		Context("if there is atleast one video", func() {
+			BeforeEach(func() {
+				bookService.Insert(book)
+			})
+			It("it should return atleast one record", func() {
+				list := bookService.FindBookByID(4)
+				Expect(list).ShouldNot(BeEmpty())
+			})
+			It("should map feild correctly", func() {
+				firstRecord := bookService.AllBook()[0]
+				Expect(firstRecord.Title).Should(Equal(book.Title))
+				Expect(firstRecord.Description).Should(Equal(book.Description))
+				Expect(firstRecord.UserID).Should(Equal(book.UserID))
+
+			})
+		})
+		Context("if there is no such id ", func() {
+			It("Should return empty list ", func() {
+				emptyList := bookService.FindBookByID(5000)
+				Expect(emptyList).Should(BeEmpty())
+			})
+		})
+	})
 	Describe("frtching all books", func() {
 
 		Context("if there is atleast one video", func() {
